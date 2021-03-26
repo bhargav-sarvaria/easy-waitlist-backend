@@ -11,10 +11,12 @@ app = Flask(__name__)
 def test():
     return 'test'
 
-@cross_origin()
+
 @app.route('/getWaitlist', methods=['post'])
+@cross_origin()
 def request_get_waitlist():
     if request.method == 'POST':
+        print("gon inside the function")
         place_id = request.args.get('place_id')
         result = get_waitlist(str(place_id))
         if result:
@@ -24,8 +26,9 @@ def request_get_waitlist():
             return jsonify({'error': True})
     return jsonify({'error': True})
 
-@cross_origin()
+
 @app.route('/getWaitlistPos', methods=['post'])
+@cross_origin()
 def request_get_waitlist_position():
     if request.method == 'POST':
         place_id = request.json['place_id']
@@ -37,8 +40,9 @@ def request_get_waitlist_position():
     return jsonify({'error': True})
 
 
-@cross_origin()
+
 @app.route('/setWaitlist', methods=['post'])
+@cross_origin()
 def request_set_waitlist():
     if request.method == 'POST':
         print(request.json)
@@ -57,8 +61,8 @@ def request_set_waitlist():
     return jsonify({'error': True})
 
 
-@cross_origin()
 @app.route('/register', methods=['post'])
+@cross_origin()
 def register():
     print(request.json)
     if request.method == 'POST':
