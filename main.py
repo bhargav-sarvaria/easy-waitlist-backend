@@ -92,6 +92,6 @@ def check():
 
 if __name__ == "__main__":
     from werkzeug.serving import run_simple
-    app.run(host='0.0.0.0')
+    app.run(threaded=True, port=5000)
     # run_simple('localhost', 9000, app)
 
