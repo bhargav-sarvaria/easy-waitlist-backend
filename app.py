@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS, cross_origin
 from mongo import *
 from message_service import *
+from key_config import *
 from url_shortner import *
 
 app = Flask(__name__)
@@ -16,7 +17,6 @@ def test():
 @cross_origin()
 def request_get_waitlist():
     if request.method == 'POST':
-        print("gon inside the function")
         place_id = request.args.get('place_id')
         result = get_waitlist(str(place_id))
         if result:
@@ -40,21 +40,23 @@ def request_get_waitlist_position():
     return jsonify({'error': True})
 
 
-
 @app.route('/setWaitlist', methods=['post'])
 @cross_origin()
 def request_set_waitlist():
-    if request.method == 'POST':
+    ifgit  request.method == 'POST':
         print(request.json)
         place_id = request.json['place_id']
         usrs = request.json['users']
         flag = request.json['flag']
-        wait_id = request.json['wait_id']
+        wait_id = None
+        if flag:
+            wait_id = request.json['wait_id']
         result = set_waitlist(str(place_id), usrs)
         if result:
             if flag:
-                short_url = shorten('http://localhost:4200/lobby/' + str(place_id) + '?wid=' + str(wait_id))
+                short_url = shorten(APP_URL + '/lobby/' + str(place_id) + '?wid=' + str(wait_id))
                 print(short_url)
+                send_sms(usrs[-1]['name'], usrs[-1]['mobile_no'], short_url)
             return jsonify({'success': True})
         else:
             return jsonify({'error': True})
@@ -76,7 +78,10 @@ def register():
         if checkIfEmailExists(email):
             return jsonify({'error': True, 'message': 'Given Email-id is already registered'})
 
-        user = {"_id": _id, "name": name, "mobile_no":mobile_no, "email": email, "password": password}
+        if checkIfMobileNoExists(mobile_no):
+            return jsonify({'error': True, 'message': 'Given Mobile No. is already registered'})
+
+        user = {"_id": _id, "name": name, "mobile_no": mobile_no, "email": email, "password": password}
         register_user(user)
         return jsonify({'success': True, '_id': _id})
 
@@ -96,6 +101,7 @@ def check():
 
 if __name__ == "__main__":
     from werkzeug.serving import run_simple
-    app.run(threaded=True, port=5000)
-    # run_simple('localhost', 9000, app)
+    # app.run(threaded=True, port=5000)
+    # run_simple('0.0.0.0', 9000, app)
+    app.run(host='0.0.0.0')
 

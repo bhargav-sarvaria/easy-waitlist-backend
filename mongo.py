@@ -52,6 +52,13 @@ def checkIfEmailExists(email):
     return False
 
 
+def checkIfMobileNoExists(mobile_no):
+    results = users.find({"mobile_no": mobile_no})
+    if results.count() > 0:
+        return True
+    return False
+
+
 def register_user(user):
     users.insert_one(user)
 
@@ -62,7 +69,7 @@ def check_login(email, password):
     message = ''
 
     if result is None:
-        message = 'Given E-mail does not exist.'
+        message = 'Couldn\'t find your email address'
     else:
         if password == str(result['password']):
             response = jsonify({'success': True, '_id': str(result['_id'])})

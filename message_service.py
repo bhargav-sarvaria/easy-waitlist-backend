@@ -20,10 +20,9 @@ data = {
 }
 
 
-def send_sms(number):
-
+def send_sms(name, number, shorten_url):
     data['numbers'] = number
-    data['message'] = 'Hey'
+    data['message'] = "Hey " + name + ", \nTrack your position in waiting through the below URL.\n"+shorten_url
     resp = requests.request("POST", url, data=data, headers=headers)
     resp_text = json.loads(resp.text)
     return resp_text
