@@ -43,7 +43,7 @@ def request_get_waitlist_position():
 @app.route('/setWaitlist', methods=['post'])
 @cross_origin()
 def request_set_waitlist():
-    ifgit  request.method == 'POST':
+    if request.method == 'POST':
         print(request.json)
         place_id = request.json['place_id']
         usrs = request.json['users']
