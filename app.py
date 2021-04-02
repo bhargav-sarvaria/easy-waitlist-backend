@@ -27,11 +27,11 @@ def request_get_waitlist():
     return jsonify({'error': True})
 
 
-@app.route('/getWaitlistPos', methods=['post'])
+@app.route('/getWaitlistPos', methods=['GET'])
 @cross_origin()
 def request_get_waitlist_position():
-    if request.method == 'POST':
-        place_id = request.json['place_id']
+    if request.method == 'GET':
+        place_id = request.args.get('place_id')
         result = get_waitlist_position(str(place_id))
         if result:
             return jsonify({'success': True, 'data': result})
