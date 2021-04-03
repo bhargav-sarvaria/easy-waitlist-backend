@@ -27,6 +27,27 @@ def request_get_waitlist():
     return jsonify({'error': True})
 
 
+@app.route('/getPlaceName', methods=['POST'])
+@cross_origin()
+def getPlaceName():
+    if request.method == 'POST':
+        print(request.json)
+        place_id = request.json['place_id']
+        return get_place_name(place_id)
+    return jsonify({'error': True, 'message': 'Not a post request'})
+
+
+@app.route('/isServed', methods=['POST'])
+@cross_origin()
+def isServed():
+    if request.method == 'POST':
+        print(request.json)
+        place_id = request.json['place_id']
+        wait_id = request.json['wait_id']
+        return is_served(place_id, wait_id)
+    return jsonify({'error': True, 'message': 'Not a post request'})
+
+
 @app.route('/getWaitlistPos', methods=['GET'])
 @cross_origin()
 def request_get_waitlist_position():
@@ -46,17 +67,16 @@ def request_set_waitlist():
     if request.method == 'POST':
         print(request.json)
         place_id = request.json['place_id']
-        usrs = request.json['users']
-        flag = request.json['flag']
-        wait_id = None
-        if flag:
-            wait_id = request.json['wait_id']
-        result = set_waitlist(str(place_id), usrs)
+        user = request.json['user']
+        add_users = request.json['users']
+        request_type = request.json['request_type']
+
+        result = set_waitlist(str(place_id), add_users, request_type, user)
         if result:
-            if flag:
-                short_url = shorten(APP_URL + '/lobby/' + str(place_id) + '?wid=' + str(wait_id))
+            if request_type == 'Add':
+                short_url = shorten(APP_URL + 'lobby/' + str(place_id) + '?wid=' + str(user['wait_id']))
                 print(short_url)
-                send_sms(usrs[-1]['name'], usrs[-1]['mobile_no'], short_url)
+                send_sms(add_users[-1]['name'], add_users[-1]['mobile_no'], short_url)
             return jsonify({'success': True})
         else:
             return jsonify({'error': True})

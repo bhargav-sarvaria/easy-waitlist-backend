@@ -1,11 +1,21 @@
 from pymongo import MongoClient
 from flask import jsonify
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 
 cluster = MongoClient('mongodb+srv://bhargavsarvaria:bhargav19@mywaitlist.abq9n.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
 db = cluster['myWaitlist']
 
 users = db['users']
+
+
+def deleteUser(wait_id, place_id):
+    result = db[place_id].delete_one({'wait_id': int(wait_id)})
+    if result is not None:
+        return  True
+    else:
+        return False
+
 
 def createPlaceCollection(place_id):
     place_id = str(place_id)
@@ -32,17 +42,41 @@ def get_waitlist_position(place_id):
         print(e)
 
 
-def set_waitlist(place_id, waitlist):
+def set_waitlist(place_id, waitlist, request_type, user):
     try:
         if (len(waitlist)) == 0:
             db[place_id].drop()
         else:
             db[place_id].delete_many({})
             db[place_id].insert_many(waitlist)
+
+        print(user)
+
+        if request_type == 'Remove':
+            db[place_id + ' served'].insert_one(user)
+
+        if request_type == 'Undo':
+            db[place_id + ' served'].delete_one({'wait_id': int(user['wait_id'])})
         return True
     except Exception as e:
         print(e)
         return False
+
+
+def get_place_name(place_id):
+    result = users.find_one({"_id": int(place_id)})
+    if result is not None:
+        return jsonify({'success': True, 'place_name': str(result['name'])})
+    else:
+        return False
+
+
+def is_served(place_id, wait_id):
+    result = db[place_id + ' served'].find_one({"wait_id": int(wait_id)})
+    if result is not None:
+        return jsonify({'success': True, 'is_served': True})
+    else:
+        return jsonify({'success': True, 'is_served': False})
 
 
 def checkIfEmailExists(email):
