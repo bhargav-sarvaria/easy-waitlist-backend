@@ -110,7 +110,7 @@ def register():
 
 @app.route('/login', methods=['POST'])
 @cross_origin()
-def check():
+def login():
     if request.method == 'POST':
         print(request.json)
         email = request.json['email']
@@ -119,9 +119,14 @@ def check():
     return jsonify({'error': True, 'message': 'Not a post request'})
 
 
+@app.route('/checkConnectivity', methods=['GET'])
+@cross_origin()
+def checkConnectivity():
+    return jsonify({'success': True})
+
+
 if __name__ == "__main__":
-    from werkzeug.serving import run_simple
-    # app.run(threaded=True, port=5000)
+    app.run(threaded=True, port=5000)
     # run_simple('0.0.0.0', 9000, app)
-    app.run(host='0.0.0.0')
+    # app.run(host='0.0.0.0')
 
