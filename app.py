@@ -126,7 +126,7 @@ def checkConnectivity():
 
 
 if __name__ == "__main__":
-    app.run(threaded=True, port=5000)
+    # app.run(threaded=True, port=5000)
     # run_simple('0.0.0.0', 9000, app)
-    # app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0')
 
