@@ -13,10 +13,10 @@ def test():
     return 'test'
 
 
-@app.route('/getWaitlist', methods=['post'])
+@app.route('/getWaitlist', methods=['GET'])
 @cross_origin()
 def request_get_waitlist():
-    if request.method == 'POST':
+    if request.method == 'GET':
         place_id = request.args.get('place_id')
         result = get_waitlist(str(place_id))
         if result:
